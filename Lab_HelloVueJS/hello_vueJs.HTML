@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Lab</title>
+    <style>         
+     body>div {
+            font-family: sans-serif;
+            font-size: 1.25em;
+            border: 1px solid gray;
+            padding: 20px;
+            margin: 20px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app1">
+        <input type="text" v-model="message"><br>
+        {{message}}<br>
+        <button v-on:mouseleave="reverseMessage">reverseMessage</button>
+    </div>
+    <div id="app2">
+        <span :title="message"> 
+        <!-- v-bind屬性綁定
+        綁在 HTML 上的屬性 (attribute) 若希望能與 vue instance 結合，就要加上v-bind 
+        可改成:屬性    -->
+        請將滑鼠移到上方
+        </span>
+    </div>
+
+    <div id="app3">
+        <span v-if="seen">Now you see me</span>
+    </div>
+
+    <div id="app4">
+        <ul>
+            <li v-for="todoItem in todoList">
+            {{todoItem.text}}
+            </li>
+        </ul>
+    </div>
+    <script>
+        var app1 = new Vue({
+            el: "#app1",   //el指定divID
+            data: {
+                message: 'Hello!! Vue.js'
+            },
+            methods: {
+                reverseMessage : function() {
+                  this.message = this.message.split('').reverse().join('');
+                }
+            }
+        });
+        var app2 = new Vue({
+            el:"#app2",
+            data: {
+                message: 'Hello! app2(v-bind屬性綁定)'
+            }
+        });
+
+        var app2 = new Vue({
+            el:"#app2",
+            data: {
+                message: '載入時間'+ new Date().toLocaleString()
+            }
+        });
+
+        var app2 = new Vue({
+            el:"#app3",
+            data: {
+                seen: true
+            }
+        });
+
+        var app4 = new Vue({
+            el: "#app4",
+            data:{
+                todoList: [
+                    {text: "Job A"},
+                    {text: "Job A"},
+                    {text: "Job A"}
+
+                ]
+            }
+        });
+
+
+
+    </script>
+</body>
+</html>
