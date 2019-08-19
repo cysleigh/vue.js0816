@@ -10,9 +10,9 @@
 <body>
     <div id="lab">
         總次數: {{totalCount}} <br>
-        <count-button v-bind:init-count="20"></count-button>
+        <count-button v-bind:init-count="20" v-on:cclick="totalCount++"></count-button>
         <br>
-        <count-button v-bind:init-count="30"></count-button>
+        <count-button v-bind:init-count="30" v-on:cclick="totalCount++"></count-button>
     </div>
 
 <script>
@@ -25,13 +25,14 @@
             }
         },
         template: `
-            <button v-on:click="doClick"> 
+            <button v-on:click="doClick();$emit('cclick');"> 
                 點按次數: {{count}} 
             </button>
         `,
         methods: {
             doClick: function () {
                 this.count++;
+                //this.$emit('cclick');
             }
         }
     })

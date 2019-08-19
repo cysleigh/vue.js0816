@@ -9,7 +9,8 @@
 </head>
 <body>
     <div id="lab">
-        <count-button v-bind:init-count="20"></count-button>
+        <!-- 遇減號在props內變大寫 -->
+        <count-button v-bind:init-count="20"></count-button> 
         <br>
         <count-button v-bind:init-count="30"></count-button>
     </div>
@@ -17,7 +18,7 @@
 <script>
 
     Vue.component('count-button', {
-        props: ['initCount'],
+        props: ['initCount'],   //不能用減號
         data: function () {
             return {
                 count: this.initCount

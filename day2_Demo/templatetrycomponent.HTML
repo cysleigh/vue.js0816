@@ -8,13 +8,23 @@
 
 </head>
 <body>
-    <ol>
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
+    <ol id="app">
+        <todo-item></todo-item>
+        <todo-item></todo-item>
+        <todo-item></todo-item>
     </ol>
 <script>
+    Vue.component("todo-item",{
+        template:`
+            <li>
+               an item
+            </li>
+        `
+    });
 
+    var app = new Vue({
+        el:"#app"
+    })
 
 
 </script>

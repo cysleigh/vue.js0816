@@ -10,7 +10,7 @@
 </head>
 <body>
     <div id="lab">
-        日期: {{ dateData | dateFormatFilter }}
+        日期: {{ dateData | dateFormatFilter ('mm/dd/yyyy HH:MM:ss') }}
     </div>
 
 <script>
@@ -20,8 +20,8 @@
             dateData: new Date()
         },
         filters: {
-            dateFormatFilter: function (value) {
-                return value.format("yyyy-mm-dd HH:MM:ss");
+            dateFormatFilter: function (value, formatStr) {
+                return value.format(formatStr);
             }
         }
     })
