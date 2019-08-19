@@ -26,13 +26,20 @@
     <div class="row">
 
         <div class="col-sm-4" id="lab">
-            <h2>最新消息{{testOK}}<span class="pull-right"><button id="newItem" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></span></h2>
+            <h2>最新消息{{testOK}}
+                <span class="pull-right">
+                    <button v-on:click="newItemClick" id="newItem" class="btn btn-success btn-sm">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
+                </span>
+            </h2>
             <ul id="latestNews" class="list-group">
-                <li v-for="newsItem in newsList" class="list-group-item">
-                    {{newsItem.title}}[{{newsItem.ymd}}]
+                <li v-for="newsItem,index in newsList" class="list-group-item">
+                    {{newsItem.title}}[{{newsItem.ymd}}] --{{index}}
                     <span class="pull-right">
-                    <button class="btn btn-info btn-xs editItem"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                    </button><button class="btn btn-danger btn-xs deleteItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                    <button v-on:click="editItemClick(index)" class="btn btn-info btn-xs editItem"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </button>
+                    <button v-on:click="deleteItemClick(index)" class="btn btn-danger btn-xs deleteItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
                     </span>
                 </li>
             </ul>
@@ -58,7 +65,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4>新增/修改</h4>
+                <h4>新增/修改 -- {{currentIndex}}</h4>
             </div>
             <div class="modal-body">
                 <form>
@@ -68,7 +75,7 @@
                             標題
                         </label>
                         <input type="text"
-                               id="titleTextBox"
+                               id="titleTextBox" v-model="title"
                                class="form-control"
                                placeholder="請輸入標題" />
                     </div>
@@ -79,7 +86,7 @@
                             日期
                         </label>
                         <input type="text"
-                               id="ymdTextBox"
+                               id="ymdTextBox" v-model="ymd"
                                class="form-control"
                                placeholder="yyyy-mm-dd 例如: 2017-05-20">
                     </div>
@@ -90,7 +97,7 @@
             <div class="modal-footer">
                     <div class="pull-right">
                         <button type="button"
-                                id="okButton"
+                                id="okButton" v-on:click="okButtonClick"
                                 class="btn btn-success">
                             <span class="glyphicon glyphicon-ok"></span> 確定
                         </button>
@@ -116,6 +123,47 @@
 <script type="text/javascript" src="js/jquery.toast.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script>
+var newsModalApp = new Vue({
+    el:"#newsModal",
+    data: {
+        currentIndex: 0,
+        title : "",
+        ymd : ""
+    },
+    methods: {
+        okButtonClick: function(){
+            if(this.currentIndex <0){
+                var newItem = {
+                    title: this.title,
+                    ymd: this.ymd
+                }
+                $.ajax({
+                    type:"post",
+                    url: "/home/news",
+                    data: newItem,
+                    success: function(e){
+                        alert(e);
+                    }
+                })
+                appNews.newsList.push(newItem);
+            }
+            else{
+                 $.ajax({
+                    type: "post",
+                    url: "/home/news",
+                    data: JSON.stringify(appNews.newsList[this.currentIndex]),
+                    success: function (e) {
+                        alert(e);
+                    }
+                })
+                appNews.newsList[this.currentIndex].title = this.title;
+                appNews.newsList[this.currentIndex].ymd = this.ymd;
+            }
+            
+            $("#newsModal").modal("hide");
+        }
+    }
+});
 
 // 使用方式:
 // showToast("標題", "提示文字") 例如:
@@ -131,15 +179,47 @@ var appNews = new Vue({
             { ymd: "2017-05-03", title: "Item 41" },
             { ymd: "2017-05-04", title: "Item 51" }
         ]
+    },
+    methods: {
+        newItemClick:function(){
+            newsModalApp.currentIndex=-1,
+            newsModalApp.title="";
+            newsModalApp.ymd="";
+          $("#newsModal").modal({backdrop: "static"});
+        },
+        editItemClick:function(idx){
+            newsModalApp.currentIndex = idx,
+            newsModalApp.title = this.newsList[idx].title;
+            newsModalApp.ymd = this.newsList[idx].ymd;
+            $("#newsModal").modal({ backdrop: "static" });
+        },
+
+        deleteItemClick:function(idx){
+            $.ajax({
+                type: "delete",
+                url: "/home/news",
+                data: this.newsList[idx],
+                success: function (e) {
+                    alert(e);
+                }
+            })
+            this.newsList.splice(idx, 1); //刪除語法(splice)
+            downloadFromServer();
+        }
     }
 })
+function downloadFromServer(){
+    $.ajax({
+        type: "get",
+        url: "/home/news",
+    }).then(function (dataFromserver) {
+        appNews.newsList = JSON.parse(dataFromserver);
+    }) 
+}
 
-$.ajax({
-    type:"get",
-    url:"/home/news",
-}).then(function(dataFromserver){
-    appNews.newsList = JSON.parse(dataFromserver);
-    })
+$(document).ready(function() {
+    downloadFromServer();
+})
 
 // function showToast(heading, message) {
 //     $.toast({
@@ -271,4 +351,4 @@ $.ajax({
 </script>
 
 </body>
-</html>
+</html>}

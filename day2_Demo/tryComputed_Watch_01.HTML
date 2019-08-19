@@ -12,7 +12,8 @@
 <div id="lab">
     First Name: <input type="text" v-model='firstName' > <br>
     Last Name: <input type="text" v-model='lastName' > <hr>
-    Full Name: {{ fullName }}
+    Full Name: {{ fullName }} <hr>
+    Last update:{{ lastUpdate }} <hr>
 </div>
 
 <script>
@@ -20,11 +21,21 @@
         el: "#lab",
         data: {
             firstName: "",
-            lastName: ""
+            lastName: "",
+            lastUpdate: " "
+
         },
         computed: {
             fullName() {
                 return this.firstName + " " + this.lastName;
+            }
+            // lastUpdate(){
+            //     return this.fullName;  
+            // }
+        },
+        watch:{
+            fullName:function(){
+                this.lastUpdate = this.fullName;
             }
         }
     })
